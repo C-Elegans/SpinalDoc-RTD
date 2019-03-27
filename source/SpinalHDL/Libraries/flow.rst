@@ -5,8 +5,8 @@ Flow
 Specification
 -------------
 
-| The Flow interface is a simple valid/payload protocol which mean the slave can't halt the bus.
-| It could be used, for example, to represent data coming from an UART controller, requests to write an on-chip memory, etc.
+The Flow interface is a simple valid/payload protocol which means the slave can't halt the bus.
+For example, it could be used to represent data coming from a UART controller, requests to write an on-chip memory, etc.
 
 .. list-table::
    :header-rows: 1
@@ -46,12 +46,12 @@ Functions
      - 
    * - master/slave Flow(type : Data)
      - | Create a Flow of a given type
-       | Initialized with corresponding in/out setup
+       | Initialized with the corresponding in/out setup
      - Flow[T]
      - 
    * - x.m2sPipe()
-     - | Return a Flow drived by x
-       | through a register stage that cut valid/payload paths
+     - | Return a Flow driven by x
+       | through a register stage that cuts the paths of ``valid`` and ``payload`` 
      - Flow[T]
      - 1
    * - | x << y
@@ -66,7 +66,7 @@ Functions
      - 1
    * - x.throwWhen(cond : Bool)
      - | Return a Flow connected to x 
-       | When cond is high, transaction are dropped
+       | that drops transactions when ``cond`` is high
      - Flow[T]
      - 0
    * - x.toReg()

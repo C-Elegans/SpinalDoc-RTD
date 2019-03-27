@@ -5,14 +5,14 @@ Fragment
 Specification
 -------------
 
-The ``Fragment`` bundle is the concept of transmitting a "big" thing by using multiple "small" fragments. For examples :
+The ``Fragment`` bundle is used to transmit a "big" thing by using multiple smaller fragments. For example:
 
 
-* A picture transmitted with width*height transaction on a ``Stream[Fragment[Pixel]]``
-* An UART packet received from an controller without flow control could be transmitted on a ``Flow[Fragment[Bits]]``
-* An AXI read burst could be carried by an ``Stream[Fragment[AxiReadResponse]]``
+* A picture transmitted with a width*height transaction on a ``Stream[Fragment[Pixel]]``
+* An UART packet received from a controller without flow control could be transmitted on a ``Flow[Fragment[Bits]]``
+* An AXI read burst could be carried by a ``Stream[Fragment[AxiReadResponse]]``
 
-Signals defined by the ``Fragment`` bundle are :
+Signals defined by the ``Fragment`` bundle are:
 
 .. list-table::
    :header-rows: 1
@@ -32,15 +32,15 @@ Signals defined by the ``Fragment`` bundle are :
      - High when the fragment is the last of the current packet
 
 
-As you can see with this specification and precedent example, the ``Fragment`` concept doesn't specify how transaction are transmitted (You can use Stream,Flow or any other communication protocol). It only add enough information (\ ``last``\ ) to know if the current transaction is the first one, the last one or one in the middle of a given packet.
+As you can see from this specification, the ``Fragment`` concept doesn't specify how transactions are transmitted (You can use Stream, Flow, or any other communication protocol). It only adds enough information (\ ``last``\ ) to know whether the current transaction is the first one, the last one, or one in the middle of a given packet.
 
 .. note::
-   The protocol didn't carry a \'first\' bit because it can be generated at any place by doing \'RegNextWhen(bus.last, bus.fire) init(True)\'
+   The protocol doesn't carry a \'first\' bit because it can be calculated at any time by doing \'RegNextWhen(bus.last, bus.fire) init(True)\'
 
 Functions
 ---------
 
-For ``Stream[Fragment[T]]`` and ``Flow[Fragment[T]]``\ , following function are presents :
+For ``Stream[Fragment[T]]`` and ``Flow[Fragment[T]]``\ , the following functions are available:
 
 .. list-table::
    :header-rows: 1
@@ -51,19 +51,19 @@ For ``Stream[Fragment[T]]`` and ``Flow[Fragment[T]]``\ , following function are 
      - Description
    * - x.first
      - Bool
-     - Return True when the next or the current transaction is/would be the first of a packet
+     - Returns True when the next or the current transaction is/will be the first of a packet
    * - x.tail
      - Bool
-     - Return True when the next or the current transaction is/would be not the first of a packet
+     - Rseturn True when the next or the current transaction is not/will not be the first of a packet
    * - x.isFirst
      - Bool
-     - Return True when an transaction is present and is the first of a packet
+     - Returns True when a transaction is present and is the first of a packet
    * - x.isTail
      - Bool
-     - Return True when an transaction is present and is the not the first/last of a packet
+     - Returns True when a transaction is present and is the not the first/last of a packet
    * - x.isLast
      - Bool
-     - Return True when an transaction is present and is the last of a packet
+     - Return True when a transaction is present and is the last of a packet
 
 
 For ``Stream[Fragment[T]]``\ , following function are also accessible :
@@ -77,5 +77,5 @@ For ``Stream[Fragment[T]]``\ , following function are also accessible :
      - Description
    * - x.insertHeader(header : T)
      - Stream[Fragment[T]]
-     - Add the ``header`` to each packet on ``x`` and return the resulting bus
+     - Prepend ``header`` to each packet on ``x`` and return the resulting bus
 

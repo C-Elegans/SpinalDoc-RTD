@@ -4,7 +4,7 @@
 Utils
 =====
 
-Some utils are also present in :ref:`spinal.core <utils>`
+Some utilities are also present in :ref:`spinal.core <utils>`
 
 State less utilities
 --------------------
@@ -18,13 +18,13 @@ State less utilities
      - Description
    * - toGray(x : UInt)
      - Bits
-     - Return the gray value converted from ``x`` (UInt)
+     - Return the gray encoded value of x ``x`` (UInt)
    * - fromGray(x : Bits)
      - UInt
      - Return the UInt value converted value from ``x`` (gray)
    * - Reverse(x : T)
      - T
-     - Flip all bits (lsb + n -> msb - n)
+     - Reverse the order of the bits (lsb + n -> msb - n)
    * - | OHToUInt(x : Seq[Bool])
        | OHToUInt(x : BitVector)
      - UInt
@@ -32,32 +32,32 @@ State less utilities
    * - | CountOne(x : Seq[Bool])
        | CountOne(x : BitVector)
      - UInt
-     - Return the number of bit set in ``x``
+     - Return the number of bits set in ``x``
    * - | MajorityVote(x : Seq[Bool])
        | MajorityVote(x : BitVector)
      - Bool
-     - Return True if the number of bit set is > x.size / 2
+     - Return True if the number of bits set is > x.size / 2
    * - EndiannessSwap(that: T[, base:BitCount])
      - T
      - Big-Endian <-> Little-Endian
    * - OHMasking.first(x : Bits)
      - Bits
-     - Apply a mask on x to only keep the first bit set
+     - Apply a mask on x to keep only the first bit set
    * - OHMasking.last(x : Bits)
      - Bits
-     - Apply a mask on x to only keep the last bit set
+     - Apply a mask on x to keep only the last bit set
    * - | OHMasking.roundRobin(
        |  requests : Bits,
        |  ohPriority : Bits
        | )
      - Bits
      - | Apply a mask on x to only keep the bit set from ``requests``.
-       | it start looking in ``requests`` from the ``ohPriority`` position.
-       | For example if ``requests`` is "1001" and ``ohPriority`` is "0010", the ``roundRobin`` function will start looking in `requests` from its second bit and will return "1000".
+       | It starts looking in ``requests`` from the ``ohPriority`` position towards the most significant bit with wraparound.
+       | For example if ``requests`` is "1001" and ``ohPriority`` is "0010", the the ``roundRobin`` function will start looking for a set bit in ``requests`` from its second bit moving to the left and will return "1000".
 
 
-State full utilities
---------------------
+Statefull utilities
+-------------------
 
 .. list-table::
    :header-rows: 1
@@ -73,16 +73,16 @@ State full utilities
      - List[T]
      - | Return a Vec of ``length`` elements
        | The first element is ``that``\ , the last one is ``that`` delayed by ``length``\ -1\
-       | The internal shift register sample when ``when`` is asserted
+       | The internal shift register samples when ``when`` is asserted
    * - BufferCC(input : T)
      - T
-     - Return the input signal synchronized with the current clock domain by using 2 flip flop
+     - Return the input signal synchronized with the current clock domain by using a 2 flip flop synchronizer
 
 
 Counter
 ^^^^^^^
 
-The Counter tool can be used to easly instanciate an hardware counter.
+The Counter tool can be used to easly instantiate an hardware counter.
 
 .. list-table::
    :header-rows: 1
@@ -100,7 +100,7 @@ The Counter tool can be used to easly instanciate an hardware counter.
      - Start at zero and finish at ``(1 << bitCount) - 1``
 
 
-There is an example of different syntaxes which could be used with the Counter tool
+Here is an example of different syntaxes which could be used with the Counter tool:
 
 .. code-block:: scala
 
@@ -113,15 +113,15 @@ There is an example of different syntaxes which could be used with the Counter t
    counter.willOverflowIfInc  //Flag that indicate if the counter overflow this cycle if an increment is done
    when(counter === 5){ ... }
 
-When a ``Counter`` overflow its end value, it restart to its start value.
+When a ``Counter`` overflows its end value, it restarts at its start value.
 
 .. note::
-   Currently, only up counter are supported.
+   Currently, only up counters are supported.
 
 Timeout
 ^^^^^^^
 
-The Timeout tool can be used to easly instanciate an hardware timeout.
+The Timeout tool can be used to easily instantiate an hardware timeout.
 
 .. list-table::
    :header-rows: 1
@@ -132,12 +132,12 @@ The Timeout tool can be used to easly instanciate an hardware timeout.
    * - Timeout(cycles : BigInt)
      - Tick after ``cycles`` clocks
    * - Timeout(time : TimeNumber)
-     - Tick after a ``time`` duration
+     - Tick with a duration of ``time`` between pulses
    * - Timeout(frequency : HertzNumber)
      - Tick at an ``frequency`` rate
 
 
-There is an example of different syntaxes which could be used with the Counter tool
+Here is an example of different syntaxes which could be used with the Timeout tool:
 
 .. code-block:: scala
 
@@ -147,17 +147,17 @@ There is an example of different syntaxes which could be used with the Counter t
    }
 
 .. note::
-   If you instanciate an ``Timeout`` with an time or frequancy setup, the implicit ``ClockDomain`` should have an frequency setting.
+   If you instanciate a ``Timeout`` with a time or frequancy argument, the implicit ``ClockDomain`` should have a frequency setting.
 
 ResetCtrl
 ^^^^^^^^^
 
-The ResetCtrl provide some utilities to manage resets.
+ResetCtrl provides some utilities to manage the behavior of resets.
 
 asyncAssertSyncDeassert
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-You can filter an asynchronous reset by using an asynchronously asserted synchronously deaserted logic. To do it you can use the ``ResetCtrl.asyncAssertSyncDeassert`` function which will return you the filtred value.
+Often times an asynchronous reset needs to be deasserted synchronously with a clock, while keeping its assertion asynchronous. To do this, you can use the ``ResetCtrl.asyncAssertSyncDeassert`` function which will the hardware necessary to synchronously release an asynchronous reset.
 
 .. list-table::
    :header-rows: 1
@@ -171,7 +171,7 @@ You can filter an asynchronous reset by using an asynchronously asserted synchro
      - Signal that should be filtered
    * - clockDomain
      - ClockDomain
-     - ClockDomain which will use the filtred value
+     - ClockDomain which will use the filtered value
    * - inputPolarity
      - Polarity
      - HIGH/LOW (default=HIGH)
@@ -183,7 +183,7 @@ You can filter an asynchronous reset by using an asynchronously asserted synchro
      - Number of register stages used to avoid metastability (default=2)
 
 
-There is also an ``ResetCtrl.asyncAssertSyncDeassertDrive`` version of tool which directly assign the ``clockDomain`` reset with the filtred value.
+There is also another version of the function called ``ResetCtrl.asyncAssertSyncDeassertDrive``, which directly assigns the current clockDomain's reset signal to the filtred value.
 
 Special utilities
 -----------------
@@ -197,6 +197,6 @@ Special utilities
      - Description
    * - LatencyAnalysis(paths : Node*)
      - Int
-     - | Return the shortest path,in therm of cycle, that travel through all nodes,
-       | from the first one to the last one
+     - | Returns the shortest path, in cycles, that travels through all nodes
+       | between the first one and the last one
 

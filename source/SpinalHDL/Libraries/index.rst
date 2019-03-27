@@ -28,18 +28,18 @@ Introduction
 
 Introduction
 ------------
-The spinal.lib package goals are :
+The goals of the spinal.lib package include:
 
 
-* Provide things that are commonly used in hardware design (FIFO, clock crossing bridges, useful functions)
+* Provide functions and modules that are commonly used in hardware design (FIFO, clock crossing bridges, useful functions)
 * Provide simple peripherals (UART, JTAG, VGA, ..)
-* Provide some bus definition (Avalon, AMBA, ..)
-* Provide some methodology (Stream, Flow, Fragment)
-* Provide some example to get the spirit of spinal
-* Provide some tools and facilities (latency analyser, QSys converter, ...)
+* Provide some bus definitions (Avalon, AMBA, ..)
+* Provide some standardized interfaces for connecting modules (Stream, Flow, Fragment)
+* Provide some examples to show how Spinal can be used
+* Provide some tools and facilities to make development easier (latency analyser, QSys converter, ...)
 
-To use features introduced in followings chapter you need, in most of cases, to ``import spinal.lib._`` in your sources.
+To use most of the features introduced in the following chapters you need to ``import spinal.lib._`` in your sources.
 
 .. important::
-   | This package is currently under construction. Documented features could be considered as stable. 
+   | This package is currently under construction. Only documented features should be considered as stable. 
    | Do not hesitate to use github for suggestions/bug/fixes/enhancements

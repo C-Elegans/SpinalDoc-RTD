@@ -9,8 +9,8 @@ Stream
 Specification
 -------------
 
-| The Stream interface is a simple handshake protocol to carry payload.
-| It could be used for example to push and pop elements into a FIFO, send requests to a UART controller, etc.
+| The Stream interface is a simple handshake protocol to carry a payload.
+| It can be used, for example, to push and pop elements into a FIFO, send requests to a UART controller, or something similar.
 
 .. list-table::
    :header-rows: 1
@@ -29,7 +29,7 @@ Specification
    * - ready
      - Bool
      - Slave
-     - When low => transaction are not consumed by the slave
+     - When low => transactions are not consumed by the slave
      - valid is low
    * - payload
      - T
@@ -46,7 +46,7 @@ Specification
      {name: 'payload', wave: 'x=x=..x==x',data:['D0','D1','D2','D3']},
    ]}
 
-There is some examples of usage in SpinalHDL :
+Here are some examples of its usage in SpinalHDL:
 
 .. code-block:: scala
 
@@ -67,12 +67,13 @@ There is some examples of usage in SpinalHDL :
    }
 
 .. note::
-   Each slave can or can't allow the payload to change when valid is high and ready is low. For examples:
+   Each slave may or may not allow the payload to change when valid is high and ready is low. For example:
 
 
-* An priority arbiter without lock logic can switch from one input to the other (which will change the payload).
-* An UART controller could directly use the write port to drive UART pins and only consume the transaction at the end of the transmission.
-  Be careful with that.
+* A priority arbiter without lock logic can switch from one input to the other (which will change the payload).
+* A UART controller could directly use the payload port signal to drive the UART TX pins and only consume the transaction at the end of the transmission.
+
+Be mindful of which kind of compnent you're using.
 
 Functions
 ---------
@@ -108,20 +109,20 @@ Functions
      - 2
    * - | x.m2sPipe()
        | x.stage()
-     - | Return a Stream drived by x
-       | through a register stage that cut valid/payload paths
+     - | Return a Stream driven by x
+       | through a register stage that cuts the ``valid``/``payload`` paths
        | Cost = (payload width + 1) flop flop
      - Stream[T]
      - 1
    * - x.s2mPipe()
-     - | Return a Stream drived by x
-       | ready paths is cut by a register stage
+     - | Return a Stream driven by x
+       | where the ``ready`` signal path is cut by a register stage
        | Cost = payload width * (mux2 + 1 flip flop)
      - Stream[T]
      - 0
    * - x.halfPipe()
-     - | Return a Stream drived by x
-       | valid/ready/payload paths are cut by some register
+     - | Return a Stream driven by x
+       | valid/ready/payload paths are cut by registers
        | Cost = (payload width + 2) flip flop, bandwidth divided by two
      - Stream[T]
      - 1
@@ -143,22 +144,22 @@ Functions
    * - | x <-/< y
        | y >/-> x
      - | Connect y to x through s2mPipe().m2sPipe()
-       | Which imply no combinatorial path between x and y
+       | Which implies no combinatorial path between x and y
      - 
      - 1
    * - x.haltWhen(cond : Bool)
-     - | Return a Stream connected to x
-       | Halted when cond is true
+     - | Return a Stream connected to x that is 
+       | halted when cond is True
      - Stream[T]
      - 0
    * - x.throwWhen(cond : Bool)
      - | Return a Stream connected to x
-       | When cond is true, transaction are dropped
+       | where transactions are dropped when cond is True
      - Stream[T]
      - 0
 
 
-The following code will create this logic :
+The following code will create this circuit:
 
 .. image:: /asset/picture/stream_throw_m2spipe.svg
    :align: center
@@ -177,15 +178,15 @@ The following code will create this logic :
    val sink   = Stream(RGB(8))
    sink <-< source.throwWhen(source.payload.isBlack)
 
-Utils
------
+Utilities
+---------
 
-There is many utils that you can use in your design in conjunction with the Stream bus, This chapter will document them.
+There are many utilties that you can use in your design in conjunction with the Stream bus which are documented here.
 
 StreamFifo
 ^^^^^^^^^^
 
-On each stream you can call the .queue(size) to get a buffered stream. But you can also instantiate the FIFO component itself :
+On any stream you can call the .queue(size) to create a buffered stream. But you can also instantiate the FIFO component itself by doing the following:
 
 .. code-block:: scala
 
@@ -231,13 +232,13 @@ On each stream you can call the .queue(size) to get a buffered stream. But you c
      - Used to remove all elements inside the FIFO
    * - occupancy
      - UInt of log2Up(depth + 1) bits
-     - Indicate the internal memory occupancy
+     - Indicates the internal memory occupancy
 
 
 StreamFifoCC
 ^^^^^^^^^^^^
 
-You can instanciate the dual clock domain version of the fifo by the following way :
+You can instantiate a dual clock version of the fifo by doing the following:
 
 .. code-block:: scala
 
@@ -290,17 +291,16 @@ You can instanciate the dual clock domain version of the fifo by the following w
      - Used to pop elements
    * - pushOccupancy
      - UInt of log2Up(depth + 1) bits
-     - Indicate the internal memory occupancy (from the push side perspective)
+     - Indicates the internal memory occupancy (from the push side perspective)
    * - popOccupancy
      - UInt of log2Up(depth + 1) bits
-     - Indicate the internal memory occupancy  (from the pop side perspective)
+     - Indicates the internal memory occupancy  (from the pop side perspective)
 
 
 StreamCCByToggle
 ^^^^^^^^^^^^^^^^
 
-| Component that provide a Stream cross clock domain bridge based on toggling signals.
-| This way of doing cross clock domain bridge is characterized by a small area usage but also a low bandwidth.
+This component crosses a Stream across two clock domains by using synchronizers and toggling signals on either clock domain. This way of crossing a clock domain uses less area (or bram on an FPGA) than the FIFO method above, but also has a reduced bandwidth
 
 .. code-block:: scala
 
@@ -349,7 +349,7 @@ StreamCCByToggle
      - Used to pop elements
 
 
-But you can also use a this shorter syntax which directly return you the cross clocked stream:
+You can also use this shorter syntax which converts an existing Stream into a cross clock domain version:
 
 .. code-block:: scala
 
@@ -365,7 +365,7 @@ But you can also use a this shorter syntax which directly return you the cross c
 StreamArbiter
 ^^^^^^^^^^^^^
 
-When you have multiple Streams and you want to arbitrate them to drive a single one, you can use the StreamArbiterFactory.
+When you have multiple Streams and you want to arbitrate their access to a single stream, you can use the StreamArbiterFactory.
 
 .. code-block:: scala
 
@@ -382,11 +382,11 @@ When you have multiple Streams and you want to arbitrate them to drive a single 
    * - Arbitration functions
      - Description
    * - lowerFirst
-     - Lower port have priority over higher port
+     - Lower ports have priority over higher ports
    * - roundRobin
      - Fair round robin arbitration
    * - sequentialOrder
-     - | Could be used to retrieve transaction in a sequancial order
+     - | Could be used to retrieve transactions in a sequential order
        | First transaction should come from port zero, then from port one, ...
 
 
@@ -402,7 +402,7 @@ When you have multiple Streams and you want to arbitrate them to drive a single 
      - The port selection is locked until the transaction on the selected port is consumed.
    * - fragmentLock
      - | Could be used to arbitrate Stream[Flow[T]].
-       | In this mode, the port selection is locked until the selected port finish is burst (last=True).
+       | In this mode, the port selection is locked until the selected port finishes its burst (last=True).
 
 
 .. list-table::
@@ -420,7 +420,7 @@ When you have multiple Streams and you want to arbitrate them to drive a single 
 StreamFork
 ^^^^^^^^^^
 
-This utile take its input stream and duplicate it outputCount times.
+This utility takes its input stream and duplicates it ``outputCount`` times.
 
 .. code-block:: scala
 
@@ -433,7 +433,7 @@ This utile take its input stream and duplicate it outputCount times.
 StreamDispatcherSequencial
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This utile take its input stream and route it to ``outputCount`` stream in a sequential order.
+This utility takes its input stream and routes it to ``outputCount`` streams in a sequential order.
 
 .. code-block:: scala
 
