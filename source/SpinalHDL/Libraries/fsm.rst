@@ -9,9 +9,9 @@ State machine
 Introduction
 ------------
 
-In SpinalHDL you can define your state machine like in VHDL/Verilog, by using enumerations and switch cases statements. But in SpinalHDL you can also use a dedicated syntax.
+In SpinalHDL you can define your state machine like as you would VHDL/Verilog, by using enumerations and switch case statements. But in SpinalHDL you can also use a dedicated, more readable syntax.
 
-The following state machine is implemented in following examples :
+The following state machine is implemented in the following examples:
 
 .. image:: /asset/picture/fsm_simple.svg
    :align: center
@@ -96,10 +96,10 @@ StateMachine is the base class that will manage the logic of your FSM.
 .. code-block:: scala
 
    val myFsm = new StateMachine{
-     // Here will come states definition
+     // state definitions go here
    }
 
-The StateMachine class also provide some utils :
+The StateMachine class also provide some utilities:
 
 .. list-table::
    :header-rows: 1
@@ -110,24 +110,24 @@ The StateMachine class also provide some utils :
      - Description
    * - isActive(state)
      - Bool
-     - Return True when the state machine is in the given state
+     - Returns True when the state machine is in the given state
    * - isEntering(state)
      - Bool
-     - Return True when the state machine is entering the given state
+     - Returns True when the state machine is entering the given state
 
 
 States
 ------
 
-There is multiple kinds of states that you can use.
+There are multiple kinds of states available for you to use.
 
 
-* State (the base one)
+* State (the base class)
 * StateDelay
 * StateFsm
 * StateParallelFsm
 
-In each of them you have access the following utilities :
+In each form, you have access to the following utilities:
 
 .. list-table::
    :header-rows: 1
@@ -146,18 +146,18 @@ In each of them you have access the following utilities :
    * - | whenIsActive{
        |  yourStatements
        | }
-     - yourStatements is executed when the state machine is in the state
+     - yourStatements is executed when the state machine is in the current state
    * - | whenIsNext{
        |  yourStatements
        | }
-     - yourStatements is executed when the state machine will be in the state the next cycle
+     - yourStatements is executed when the state machine will be in this state on the next cycle
    * - goto(nextState)
      - Set the state of the state machine by nextState
    * - exit()
      - Set the state of the state machine to the boot one
 
 
-For example, the following state could be defined in SpinalHDL by using the following syntax :
+For example, the following state machine could be defined in SpinalHDL by using the following syntax :
 
 .. image:: /asset/picture/fsm_stateb.svg
    :align: center
@@ -176,7 +176,7 @@ For example, the following state could be defined in SpinalHDL by using the foll
      onExit(io.result := True)
    }
 
-You can also define your state as the entry point of the state machine by extends the EntryPoint trait.
+You can also define your state as the entry point of the state machine by extends the ``EntryPoint`` trait.
 
 .. code-block:: scala
 
@@ -189,7 +189,7 @@ You can also define your state as the entry point of the state machine by extend
 StateDelay
 ^^^^^^^^^^
 
-StateDelay allow you to create a state which wait a fixed number of cycles before executing statments in your ``whenCompleted{...}``. The standard way to write it is :
+StateDelay allows you to create a state which waits a fixed number of cycles before executing statments in your ``whenCompleted{...}`` block. The standard way to write it is:
 
 .. code-block:: scala
 
@@ -199,7 +199,7 @@ StateDelay allow you to create a state which wait a fixed number of cycles befor
      }
    }
 
-But you can also write it like that :
+But it can also be written like this:
 
 .. code-block:: scala
 
@@ -220,7 +220,7 @@ There is an example of StateFsm definition :
      }
    }
 
-As you can see in the precedent code, it use a ``internalFsm`` function to create the inner state machine. There is an example of definition bellow :
+As you can see in the preceeding code, it uses a ``internalFsm`` function to create the inner state machine. An example of this kind of function is included below:
 
 .. code-block:: scala
 
@@ -244,14 +244,14 @@ As you can see in the precedent code, it use a ``internalFsm`` function to creat
      }
    }
 
-In the precedent example, the ``exit()`` call will make the state machine jump to the boot state (a internal hidden state). This notify the StateFsm about the completion of the inner state machine.
+In the preceeding example, the ``exit()`` call will make the state machine jump to the boot state (a internal hidden state). This notifies the StateFsm that the inner state machine has been completed.
 
 StateParallelFsm
 ^^^^^^^^^^^^^^^^
 
-This state is able to handle multiple nested state machines. When all nested state machine are done, your statments in ``whenCompleted{...}`` are executed.
+This state is able to handle multiple parallel state machines. When all child state machines are done, your statments in ``whenCompleted{...}`` are executed.
 
-There is an example of declaration :
+Here is an example of its declaration:
 
 .. code-block:: scala
 
